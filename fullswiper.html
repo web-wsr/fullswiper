@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullswiper</title>
+    <link rel="stylesheet" href="./swiper.css">
+</head>
+
+<body>
+    <div class="swiper-wrapper" id="swiper-wrapper1">
+        <div class="swiper-list" id="swiper-list">
+            <div class="swiper-item" style="background-color: #82A6F5;">1</div>
+            <div class="swiper-item" style="background-color: #EAF048;">2</div>
+            <div class="swiper-item" style="background-color: #9FF048;">3</div>
+            <div class="swiper-item" style="background-color: #2A5200;">4</div>
+            <div class="swiper-item" style="background-color: #F6D6FF;">5</div>
+        </div>
+        <div class="swiper-pagination">
+            <span class="swiper-pagination-switch active"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+        </div>
+        <a class="swiper-arrow swiper-arrow-left" id="swiper-prev">&lt;</a>
+        <a class="swiper-arrow swiper-arrow-right" id="swiper-next">&gt;</a>
+    </div>
+    <div class="swiper-wrapper" id="swiper-wrapper2">
+        <div class="swiper-list" id="swiper-list">
+            <div class="swiper-item" style="background-color: #82A6F5;">1</div>
+            <div class="swiper-item" style="background-color: #EAF048;">2</div>
+            <div class="swiper-item" style="background-color: #9FF048;">3</div>
+            <div class="swiper-item" style="background-color: #2A5200;">4</div>
+            <div class="swiper-item" style="background-color: #F6D6FF;">5</div>
+            <div class="swiper-item" style="background-color: #F6D6FF;">6</div>
+            <div class="swiper-item" style="background-color: #F6D6FF;">7</div>
+            <div class="swiper-item" style="background-color: #F6D6FF;">8</div>
+        </div>
+        <div class="swiper-pagination">
+            <span class="swiper-pagination-switch active"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+        </div>
+        <a class="swiper-arrow swiper-arrow-left" id="swiper-prev">&lt;</a>
+        <a class="swiper-arrow swiper-arrow-right" id="swiper-next">&gt;</a>
+    </div>
+    <div class="swiper-wrapper" id="swiper-wrapper3">
+        <div class="swiper-list" id="swiper-list">
+            <div class="swiper-item" style="background-color: #82A6F5;">1</div>
+            <div class="swiper-item" style="background-color: #EAF048;">2</div>
+            <div class="swiper-item" style="background-color: #9FF048;">3</div>
+            <div class="swiper-item" style="background-color: #2A5200;">4</div>
+            <div class="swiper-item" style="background-color: #F6D6FF;">5</div>
+            <div class="swiper-item" style="background-color: #2A5200;">6</div>
+            <div class="swiper-item" style="background-color: #F6D6FF;">7</div>
+            <div class="swiper-item" style="background-color: #2A5200;">8</div>
+            <div class="swiper-item" style="background-color: #2A5200;">9</div>
+        </div>
+        <div class="swiper-pagination">
+            <span class="swiper-pagination-switch active"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+            <span class="swiper-pagination-switch"></span>
+        </div>
+        <a class="swiper-arrow swiper-arrow-left" id="swiper-prev">&lt;</a>
+        <a class="swiper-arrow swiper-arrow-right" id="swiper-next">&gt;</a>
+    </div>
+    <script>
+        class FullSwiper {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.swiperList = this.container.querySelector('.swiper-list');
+                this.swiperItemWidth = this.swiperList.offsetWidth;
+                this.defaultLength = this.swiperList.children.length;
+
+
+                // 设置初始状态
+                this.swiperList.style.transform = `translateX(-${this.swiperItemWidth}px)`;
+
+                // 设置页面数据
+                this.data = {
+                    index: 0,
+                    duration: 500,
+                    isLock: false,
+                    translateX: -this.swiperItemWidth,
+                    defaultLength: this.defaultLength,
+                    itemWidth: this.swiperItemWidth,
+                };
+                this.init()
+            }
+
+            init() {
+                this.clone();
+                this.bind();
+            }
+
+            bind() {
+                // 绑定事件
+                this.container.querySelector('.swiper-arrow-left').addEventListener('click', this.swiperPrev.bind(this));
+                this.container.querySelector('.swiper-arrow-right').addEventListener('click', this.swiperNext.bind(this));
+                const swiperSwitches = this.container.querySelectorAll('.swiper-pagination-switch');
+                for (let i = 0; i < swiperSwitches.length; i++) {
+                    swiperSwitches[i].setAttribute('data-index', i);
+                    swiperSwitches[i].addEventListener('click', this.swiperSwitch.bind(this));
+                }
+                window.addEventListener('resize', this.swiperReset.bind(this));
+            }
+            // 复制第一个和最后一个轮播项，以实现循环滚动
+            clone() {
+                const firstItem = this.swiperList.children[0].cloneNode();
+                const lastItem = this.swiperList.children[this.defaultLength - 1].cloneNode();
+                this.swiperList.appendChild(firstItem);
+                this.swiperList.insertBefore(lastItem, this.swiperList.children[0]);
+            }
+
+            swiperReset(e) {
+                const swiperItemWidth = this.swiperList.offsetWidth;
+                const index = this.data.index;
+                const translateX = -(swiperItemWidth + swiperItemWidth * index);
+                this.data.itemWidth = swiperItemWidth;
+                this.data.translateX = translateX;
+                this.swiperList.style.transform = `translateX(${translateX}px)`;
+            }
+
+            swiperPrev() {
+                const index = this.data.index;
+                this.goIndex(index - 1);
+            }
+
+            swiperNext() {
+                const index = this.data.index;
+                this.goIndex(index + 1);
+            }
+
+            swiperSwitch(e) {
+                const index = e.target.dataset.index;
+                index = Number(index);
+                this.goIndex(index);
+
+            }
+
+            goIndex(index) {
+                const swiperDuration = this.data.duration;
+                const swiperItemWidth = this.data.itemWidth;
+                const beginTranslateX = this.data.translateX;
+                const endTranslateX = -(swiperItemWidth + swiperItemWidth * index);
+
+                const isLock = this.data.isLock;
+                if (isLock) {
+                    return;
+                }
+
+                this.data.isLock = true;
+                this.animateTo(beginTranslateX, endTranslateX, swiperDuration, (value) => {
+                    this.swiperList.style.transform = `translateX(${value}px)`;
+                }, (value) => {
+                    const swiperLength = this.data.defaultLength;
+                    if (index === -1) {
+                        index = swiperLength - 1;
+                    }
+                    if (index === swiperLength) {
+                        index = 0;
+                    }
+
+                    const newTranslateX = -(swiperItemWidth + swiperItemWidth * index);
+                    this.swiperList.style.transform = `translateX(${newTranslateX}px)`;
+                    this.data.index = index;
+                    this.data.translateX = newTranslateX;
+                    this.data.isLock = false;
+                    this.highlightPagination(index);
+                });
+            }
+
+            highlightPagination(index) {
+                const swiperItem = this.container.querySelectorAll('.swiper-pagination-switch');
+                for (let i = 0; i < swiperItem.length; i++) {
+                    swiperItem[i].className = 'swiper-pagination-switch';
+                }
+                swiperItem[index].className = 'swiper-pagination-switch active';
+                // swiperItem.forEach((element, i) => {
+                //     element.classList.remove('active');
+                //     if (i === index) {
+                //         element.classList.add('active');
+                //     }
+                // });
+            }
+
+            animateTo(begin, end, duration, changeCallback, finishCallback) {
+                const startTime = Date.now();
+                const update = () => {
+                    const dataNow = Date.now();
+                    const time = dataNow - startTime;
+                    const value = this.linear(time, begin, end, duration);
+                    typeof changeCallback === 'function' && changeCallback(value);
+                    if (startTime + duration > dataNow) {
+                        requestAnimationFrame(update);
+                    } else {
+                        typeof finishCallback === 'function' && finishCallback(end);
+                    }
+                };
+                requestAnimationFrame(update);
+            }
+
+            linear(time, begin, end, duration) {
+                return (end - begin) * time / duration + begin;
+            }
+        }
+
+        // 初始化多个轮播图
+        const fullSwiper1 = new FullSwiper('swiper-wrapper1');
+        const fullSwiper2 = new FullSwiper('swiper-wrapper2');
+        const fullSwiper3 = new FullSwiper('swiper-wrapper3');
+    </script>
+</body>
+
+
+</html>
